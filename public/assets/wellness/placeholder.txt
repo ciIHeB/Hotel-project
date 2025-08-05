@@ -1,0 +1,8 @@
+Images à ajouter dans ce dossier :
+- spa.jpg (Espace spa)
+- hammam.jpg (Hammam traditionnel)
+- massage.jpg (Salle de massage)
+- gym.jpg (Salle de sport)
+
+Taille recommandée : 800x600px
+Format : JPG ou PNG 

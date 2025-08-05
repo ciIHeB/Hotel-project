@@ -1,0 +1,100 @@
+.section-8 {
+  color: black;
+  padding-block: 112px;
+  background-color: #f8f9fa;
+}
+.section8-title {
+  display: grid;
+  place-items: center;
+}
+.section8-title h1 {
+  font-size: 40px;
+  font-weight: 400;
+  font-family: "Playfair Display", system-ui;
+  padding-bottom: 10px;
+}
+.section8-title-border {
+  width: 100px;
+  height: 1px;
+  background-color: black;
+}
+.card-img {
+  border-radius: 4px;
+  object-fit: cover;
+}
+.card-title {
+  font-size: 20px;
+  font-weight: 500;
+  font-family: "Work Sans", system-ui;
+  margin-bottom: 8px;
+}
+.card-subtitle {
+  font-family: "Work Sans", system-ui;
+  color: gray;
+  width: 401px;
+}
+.section8-card {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  position: relative;
+}
+.section8-cards {
+  overflow: clip;
+  overflow-clip-margin: 20px;
+  margin-top: 54px;
+  position: relative;
+}
+.bx {
+  font-size: 40px;
+  cursor: pointer;
+}
+.arrows {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1180px;
+}
+.active {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #f23a2e;
+}
+.deactive {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #cccccc;
+}
+.dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+}
+.dots span {
+  cursor: pointer;
+}
+.unselected {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  align-items: center;
+  left: 1200px;
+  top: 0;
+  /* left: 50%;
+  transform: translateX(-50%); */
+}

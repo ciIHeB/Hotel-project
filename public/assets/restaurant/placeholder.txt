@@ -1,0 +1,7 @@
+Images à ajouter dans ce dossier :
+- main.jpg (Restaurant principal)
+- a-la-carte.jpg (Restaurant à la carte)
+- snack.jpg (Snack bar)
+
+Taille recommandée : 800x600px
+Format : JPG ou PNG 

@@ -1,0 +1,67 @@
+.section-6{
+    color: black;
+    background-color: white;
+    padding-block: 112px;
+    position: relative;
+}
+.section6-title h1{
+    font-size: 40px;
+    font-weight: 400;
+    font-family: "Playfair Display", system-ui;
+    padding-bottom: 10px;
+}
+.section6-title-border{
+    width: 100px;
+    height: 1px;
+    background-color: black;
+}
+.section6-title{
+    display: grid;
+    place-items: center;
+}
+.section6-img{
+    width: 277px;
+    height: 190px;
+    cursor:zoom-in;
+    position: relative;
+}
+.section6-img img{
+    width: 100%;
+    height: 100%;
+}
+.section6-gallery{
+    display: grid;
+    grid-template-columns: repeat(4,277px);
+    grid-template-rows: 1fr 1fr;
+    place-items: center;
+    margin-top: 100px;
+}
+.section6-pattern{
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    transition: 0.3s;
+    transition-timing-function: ease;
+}
+.section6-img:hover .section6-pattern{
+    opacity: 1;
+}
+.selected-img{
+    width: 800px;
+    height: 530px;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    transition: 0.3s;
+    transition-timing-function: ease;
+    opacity: 1;
+    z-index: 2;
+}
+.selected-img img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

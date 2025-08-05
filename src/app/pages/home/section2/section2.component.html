@@ -1,0 +1,23 @@
+<section class="section-2">
+    <div class="container section2">
+        <div class="section2-title-main">
+            <h1 class="section2-title">Our Rooms</h1>
+            <div class="section2-title-border"></div>
+        </div>
+        <div class="section2-cards">
+            @for (item of cards; track $index) {
+                <div class="section2-card">
+                    <div class="section2-card-img">
+                        <a href="/home">
+                        <img [src]="item.imgSrc" [alt]="item.title">
+                        </a>
+                    </div>
+                    <div class="section2-card-text">
+                        <a href="/home" class="section2-card-title">{{item.title}}</a>
+                        <p class="section2-card-price">{{item.price}} / per night</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

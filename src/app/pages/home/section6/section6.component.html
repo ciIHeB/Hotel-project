@@ -1,0 +1,43 @@
+<section class="section-6">
+  <div class="container section6">
+    <div class="section6-title">
+      <h1>Our Gallery</h1>
+      <div class="section6-title-border"></div>
+    </div>
+    <div class="section6-gallery">
+      <div
+        class="selected-img"
+        [ngStyle]="{
+          transform: selectedImg ? 'scale(1)' : 'scale(0)'
+        }"
+      >
+        <h1
+          style="
+            text-align: end;
+            position: relative;
+            left: 20px;
+            bottom: 20px;
+            cursor: pointer;
+          "
+          (click)="unselect()"
+        >
+          X
+        </h1>
+        <img src="{{ selectedImg }}" alt="selectedImg" />
+      </div>
+      @for (imageName of imageNames; track $index) {
+      <div class="section6-img">
+        <div class="section6-pattern" (click)="select($index)"></div>
+        <img
+          [ngSrc]="'./assets/my_img/' + imageName"
+          [alt]="imageName"
+          (click)="select($index)"
+          width="277"
+          height="190"
+          priority
+        />
+      </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,42 @@
+<div
+  class="header"
+  [@openClose]="isOpen ? 'open' : 'closed'"
+  [ngStyle]="{
+    boxShadow: isOpen ? '' : '0 0 30px -5px rgba(0,0,0,0.1)'
+  }"
+>
+  <header
+    class="container"
+    [ngStyle]="{
+      color: isOpen ? 'white' : 'black',
+    }"
+    [@openClose]="isOpen ? 'show' : 'hide'"
+  >
+    <a class="header-title" routerLink="/home">Hôtel Tanfous</a>
+    <ul class="header-list">
+      @if(isOpen){
+      <li
+        *ngFor="let item of headerLinks; let i = index"
+        [ngStyle]="{
+                        color: active === i ? 'white' : 'rgba(255, 255, 255, 0.6)',
+                    }"
+        class="header-link"
+        (click)="handleClick(i)"
+      >
+        <a [routerLink]="item.link">{{ item.title }}</a>
+      </li>
+      }@else {
+      <li
+        *ngFor="let item of headerLinks; let i = index"
+        [ngStyle]="{
+                        color: active === i ? 'red' : '#66666699',
+                    }"
+        [ngClass]="active === i ? 'selected' : 'unselected'"
+        (click)="handleClick(i)"
+      >
+        <a [routerLink]="item.link">{{ item.title }}</a>
+      </li>
+      }
+    </ul>
+  </header>
+</div>

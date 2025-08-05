@@ -1,0 +1,18 @@
+<section class="section-4">
+    <div class="container section4">
+        <div class="section4-title">
+            <h1>Hotel Features</h1>
+            <div class="section4-title-border"></div>
+        </div>
+        <div class="section4-cards">
+            @for (item of feature; track $index) {
+                <div class="feature-card">
+                    <div class="feature-img">
+                        <img [src]="item.icon" [alt]="item.title">
+                    </div>
+                    <h1 class="feature-title">{{item.title}}</h1>
+                </div>
+            }
+        </div>
+    </div>
+</section>

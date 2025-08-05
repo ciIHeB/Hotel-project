@@ -1,0 +1,55 @@
+.section5-title{
+    font-size:32px;
+    font-weight:400;
+    font-family:"Work Sans", system-ui;
+    margin-bottom:18px;
+}
+.section5-btn{
+    font-family: "Work Sans", system-ui;
+    padding: 6px 12px;
+    border: 0.8px solid rgb(238, 198, 10);
+    transition: 0.15s;
+    transition-timing-function: ease-in-out;
+}
+.section5-btn:hover{
+    background-color: rgb(238, 198, 10);
+    color: white;
+}
+.date-title{
+    font-size:12px;
+    letter-spacing: 2.4px;
+    font-family: 'Work Sans', system-ui;
+    font-weight: 400;
+    padding-bottom: 15px;
+}
+.date{
+    font-size:40px;
+    font-family: 'Work Sans', system-ui;
+    font-weight: 400;
+}
+.date span{
+    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Work Sans', system-ui;
+    color: rgba(255, 255,255, 0.4);
+}
+.section5{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 48px;
+    position: relative;
+    z-index: 1;
+}
+.section-5{
+    background-image: url('../../../../../public/assets/my_img/1.jpg');
+    background-size: cover;
+    position: relative;
+}
+.section5-pattern{
+    width: 100%;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    inset: 0;
+}

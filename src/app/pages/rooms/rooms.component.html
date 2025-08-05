@@ -1,0 +1,39 @@
+<div class="rooms-page">
+  <div class="hero-section">
+
+
+  </div>
+
+  <div class="rooms-container">
+    <div class="room-card" *ngFor="let room of rooms">
+      <div class="room-image">
+        <img [src]="room.image" [alt]="room.name">
+        <div class="room-price">{{ room.price }}</div>
+      </div>
+      <div class="room-content">
+        <h3>{{ room.name }}</h3>
+        <p class="description">{{ room.description }}</p>
+        
+        <div class="room-details">
+          <div class="detail-item">
+            <span class="icon">👥</span>
+            <span>{{ room.capacity }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">📏</span>
+            <span>{{ room.size }}</span>
+          </div>
+        </div>
+
+        <div class="amenities">
+          <h4>Équipements inclus :</h4>
+          <ul>
+            <li *ngFor="let amenity of room.amenities">{{ amenity }}</li>
+          </ul>
+        </div>
+
+        <button class="book-btn" routerLink="/reservation">Réserver maintenant</button>
+      </div>
+    </div>
+  </div>
+</div>

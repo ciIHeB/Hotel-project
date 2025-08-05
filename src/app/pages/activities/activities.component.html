@@ -1,0 +1,18 @@
+<div class="activities-page">
+  <div class="hero-section">
+   
+  </div>
+
+  <div class="activities-grid">
+    <div class="activity-card" *ngFor="let activity of activities">
+      <div class="activity-image">
+        <img [src]="activity.image" [alt]="activity.name">
+        <div class="activity-icon">{{ activity.icon }}</div>
+      </div>
+      <div class="activity-content">
+        <h3>{{ activity.name }}</h3>
+        <p>{{ activity.description }}</p>
+      </div>
+    </div>
+  </div>
+</div> 

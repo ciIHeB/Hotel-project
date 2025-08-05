@@ -1,0 +1,65 @@
+<section class="section-8">
+  <div class="container section8">
+    <div class="section8-title">
+      <h1>What People Say</h1>
+      <div class="section8-title-border"></div>
+    </div>
+    <div class="section8-cards">
+      <div class="arrows">
+        <i class="bx bx-left-arrow-alt" (click)="moveLeft()"></i>
+        <i class="bx bx-right-arrow-alt" (click)="moveRight()"></i>
+      </div>
+      @for(item of info; track $index){ @if($index === selected){
+
+      <div class="selected" [@closeOpen]="next ? 'open' : 'close'">
+        <div class="section8-card" *ngFor="let thing of item; let i = index">
+          <img
+            class="card-img"
+            [ngSrc]="thing.img"
+            alt="section8-img"
+            width="80"
+            height="70"
+            priority
+          />
+          <div class="section8-text">
+            <h1 class="card-title">{{ thing.title }}</h1>
+            <p class="card-subtitle">
+              “Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias
+              accusantium qui optio, possimus necessitatibus voluptate aliquam
+              velit nostrum tempora ipsam!”
+            </p>
+          </div>
+        </div>
+      </div>
+      } @else{
+      <div class="unselected" [@openClose]="next ? 'open' : 'close'">
+        <div class="section8-card" *ngFor="let thing of item; let i = index">
+          <img
+            class="card-img"
+            [ngSrc]="thing.img"
+            alt="section8-img"
+            width="80"
+            height="70"
+            priority
+          />
+          <div class="section8-text">
+            <h1 class="card-title">{{ thing.title }}</h1>
+            <p class="card-subtitle">
+              “Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias
+              accusantium qui optio, possimus necessitatibus voluptate aliquam
+              velit nostrum tempora ipsam!”
+            </p>
+          </div>
+        </div>
+      </div>
+      } }
+    </div>
+    <div class="dots">
+      @for(item of dots; track $index){ @if(active === $index){
+      <span class="active"></span>
+      }@else{
+      <span class="deactive"></span>
+      } }
+    </div>
+  </div>
+</section>

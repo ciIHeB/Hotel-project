@@ -1,0 +1,146 @@
+header {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 40px;
+}
+.header-title {
+  font-size: 26px;
+  font-family: "Playfair Display", system-ui;
+  font-weight: 200;
+}
+.header-link {
+  font-size: 14px;
+  font-family: "Work Sans", system-ui;
+  transition: 0.3s;
+  transition-timing-function: ease;
+}
+.header-link:hover {
+  color: white !important;
+}
+.header-link-open {
+  font-size: 14px;
+  font-family: "Work Sans", system-ui;
+  transition: 0.3s;
+  transition-timing-function: ease;
+}
+.header-link-open:hover {
+  color: black !important;
+}
+.header-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+}
+.link-select {
+  position: relative;
+  top: 8px;
+  height: 35px;
+}
+.link-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+.link-title i {
+  font-size: 20px;
+}
+.selectors {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  display: none;
+  transition: 0.3s;
+  gap: 10px;
+  transition-timing-function: ease;
+  text-wrap: nowrap;
+  top: 35px;
+  padding-inline: 10px;
+  padding-block: 20px;
+  background-color: black;
+  color: white;
+  width: 200px;
+  height: 130px;
+  border-radius: 10px;
+}
+.link-select:hover .selectors {
+  display: flex;
+}
+.link-select-2 {
+  position: relative;
+}
+.link-title-2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 185px;
+}
+.link-title-2 i {
+  font-size: 20px;
+}
+.selectors-2 {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  display: none;
+  transition: 0.3s;
+  transition-timing-function: ease;
+  text-wrap: nowrap;
+  top: -30px;
+  left: 185px;
+  width: 160px;
+  height: 130px;
+  background-color: black;
+  padding-left: 20px;
+  border-radius: 10px;
+  color: white;
+}
+.link-select-2:hover .selectors-2,
+.link-select:hover .selector {
+  display: flex;
+}
+.selector-text:hover {
+  color: red;
+}
+.selector-text-2:hover {
+  color: red;
+  cursor: pointer;
+}
+.select-pattern {
+  position: absolute;
+  top: -5px;
+  left: 20px;
+  background-color: black;
+  width: 20px;
+  height: 20px;
+  transform: rotate(45deg);
+}
+.header {
+  width: 100%;
+  position: fixed;
+  height: 70px;
+  inset: 0;
+  z-index: 4;
+}
+.selected:hover {
+  color: red;
+}
+.unselected:hover {
+  color: black !important;
+}
+.selected,
+.unselected {
+  font-size: 14px;
+  font-family: "Work Sans", system-ui;
+  transition: 0.3s;
+  transition-timing-function: ease;
+}

@@ -1,0 +1,8 @@
+Images à ajouter dans ce dossier :
+- aquapark.jpg (Aquapark avec toboggans)
+- beach.jpg (Plage privée)
+- animations.jpg (Spectacles et animations)
+- sports.jpg (Activités sportives)
+
+Taille recommandée : 800x600px
+Format : JPG ou PNG 

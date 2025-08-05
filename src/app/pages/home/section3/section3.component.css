@@ -1,0 +1,110 @@
+.section-3{
+    background-color:white;
+    color: black;
+    position: relative;
+}
+.about-video{
+    width: 540px;
+    height: 371px;
+    position: relative;
+}
+.about-video-img{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+.about-img{
+    position: absolute;
+    bottom: -30px;
+    right: -80px;
+    width: 285px;
+    height: 199px;
+    border: 6.4px solid white;
+    z-index: 2;
+}
+.about-img img{
+    width: 100%;
+    height: 100%;
+}
+.about-play i{
+    font-size:60px;
+    color: white;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+.about-play{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    cursor: pointer;
+}
+.about-title h1{
+    font-size:40px;
+    font-weight:400;
+    font-family: 'Playfair Display', system-ui;
+    padding-bottom:10px;
+}
+.about-title-border{
+    width: 100px;
+    height: 1px;
+    background-color: black;
+}
+.about-subtitle{
+    font-family:'Work Sans', system-ui;
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 27.2px;
+    width: 445px;
+    padding-bottom:24px;
+    padding-top: 48px;
+}
+.about-btn p{
+    font-family: 'Work Sans', system-ui;
+    transition: 0.3;
+    font-size: 16px;
+    transition-timing-function: ease;
+    transition-property: all;
+}
+.about-btn i{
+    font-size: 20px;
+}
+.about-btn{
+    display: flex;
+    align-items: center;
+    background-color: white;
+    color: rgb(242, 58, 46);
+}
+.about-btn:hover{
+    color: rgb(220, 3, 3);
+}
+.section3-main{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 112px;
+}
+.about-vid{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 500px;
+    z-index: 3;
+}
+.about-vid video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.video-pattern{
+    font-family: "Playfair Display", system-ui;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: end;
+    position: relative;
+    left: 20px;
+    bottom: 20px;
+    cursor: pointer;
+}

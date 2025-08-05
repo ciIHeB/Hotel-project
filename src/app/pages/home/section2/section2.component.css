@@ -1,0 +1,73 @@
+*{
+    color: black;
+}
+.section-2{
+    background-color: #F8F9FA;
+    padding-block: 112px;
+}
+.section2-title{
+    font-size:40px;
+    font-family:"Playfair Display",system-ui;
+    font-weight:400;
+    text-align: center;
+}
+.section2-title-border{
+    width: 100px;
+    height: 1px;
+    background-color: black;
+}
+.section2-title-main{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+    margin-bottom:70px;
+}
+.section2-card-img{
+    width: 349px;
+    height: 240px;
+    overflow: hidden;
+}
+.section2-card-img a img{
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    transition: 0.3s;
+    transition-property: all;
+    transition-timing-function: ease;
+}
+.section2-card-img a img:hover{
+    transform: scale(1.1);
+}
+.section2-card-title{
+    font-size:20px;
+    font-family:"Work Sans",system-ui;
+    color: black;
+    text-align: center;
+}
+.section2-card-price{
+    font-size:16px;
+    font-family: "Work Sans", system-ui;
+    text-align: center;
+    color: rgb(92, 120, 147);
+}
+.section2-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding-bottom: 30px;
+    background-color: white;
+}
+.section2-cards{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 35px;
+}
+.section2-card-text{
+    line-height: 27.2px;
+}

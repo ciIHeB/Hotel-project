@@ -1,0 +1,72 @@
+<section class="section-7">
+  <div class="container section7">
+    <div class="section7-title">
+      <h1>Upcoming Events</h1>
+      <div class="section7-title-border"></div>
+    </div>
+    <div class="section7-cards">
+      <div class="arrows">
+        <i class="bx bx-left-arrow-alt" (click)="moveLeft()"></i>
+        <i class="bx bx-right-arrow-alt" (click)="moveRight()"></i>
+      </div>
+      @for(item of imgSrc; track $index){ @if($index === selected){
+      <div class="selected" [@closeOpen]="next ? 'open' : 'close'">
+        <div class="section7-card" *ngFor="let thing of item; let i = index">
+          <div class="section7-img">
+            <img
+              [ngSrc]="'./assets/events/img' + i + '.jpg'"
+              alt="section7-img"
+              width="308"
+              height="212"
+              priority
+            />
+          </div>
+          <div class="section7-text">
+            <div class="card-title">
+              <h1>Lorem Ipsum Dolor Sit Amet</h1>
+              <p>Dec 20th, 2018 • By <span>Admin</span></p>
+            </div>
+            <p class="card-subtitle">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
+              dolores culpa qui aliquam placeat nobis veritatis tempora natus
+              rerum obcaecati.
+            </p>
+          </div>
+        </div>
+      </div>
+      } @else{
+      <div class="unselected" [@openClose]="next ? 'open' : 'close'">
+        <div class="section7-card" *ngFor="let thing of item; let i = index">
+          <div class="section7-img">
+            <img
+              [ngSrc]="'./assets/events/img' + i + '.jpg'"
+              alt="section7-img"
+              width="308"
+              height="212"
+              priority
+            />
+          </div>
+          <div class="section7-text">
+            <div class="card-title">
+              <h1>Lorem Ipsum Dolor Sit Amet</h1>
+              <p>Dec 20th, 2018 • By <span>Admin</span></p>
+            </div>
+            <p class="card-subtitle">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
+              dolores culpa qui aliquam placeat nobis veritatis tempora natus
+              rerum obcaecati.
+            </p>
+          </div>
+        </div>
+      </div>
+      } }
+    </div>
+    <div class="dots">
+      @for(item of dots; track $index){ @if(active === $index){
+      <span class="active"></span>
+      }@else{
+      <span class="deactive"></span>
+      } }
+    </div>
+  </div>
+</section>

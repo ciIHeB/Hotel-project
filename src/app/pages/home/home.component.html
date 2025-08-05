@@ -1,0 +1,145 @@
+<!-- Section Héros avec Slider -->
+<div class="hero-section">
+  <div class="hero-slider">
+    <i class="bx bx-left-arrow-alt slider-arrow left" (click)="changeLeft()"></i>
+    <div class="hero-content">
+      <h1 class="hero-title"></h1>
+      <p class="hero-subtitle"></p>
+      <div class="hero-buttons">
+        <button class="btn-primary" routerLink="/reservation">Réserver maintenant</button>
+        <button class="btn-secondary" routerLink="/chambres">Voir les chambres</button>
+      </div>
+    </div>
+    <i class="bx bx-right-arrow-alt slider-arrow right" (click)="changeRight()"></i>
+  </div>
+  <div class="hero-overlay"></div>
+</div>
+
+<!-- Section Présentation -->
+<section class="presentation-section">
+  <div class="container">
+    <div class="presentation-content">
+      <div class="presentation-text">
+        <h2>Bienvenue à l'Hôtel Tanfous Beach & Aquapark</h2>
+        <p>Découvrez un havre de paix en bord de mer à Hammamet Sud. Notre établissement 3 étoiles vous offre une expérience unique avec son aquapark, sa plage privée et ses services de bien-être.</p>
+        <div class="features-grid">
+          <div class="feature-item">
+            <span class="feature-icon">🏊‍♂️</span>
+            <h3>Aquapark</h3>
+            <p>7 toboggans pour tous les âges</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🏖️</span>
+            <h3>Plage privée</h3>
+            <p>Sable fin et eaux cristallines</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🍽️</span>
+            <h3>Restauration</h3>
+            <p>Buffets et cuisine à la carte</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🧖‍♀️</span>
+            <h3>Spa & Bien-être</h3>
+            <p>Détente et relaxation garanties</p>
+          </div>
+        </div>
+      </div>
+      <div class="presentation-image">
+        <img src="assets/my_img/2.jpg" alt="Hôtel Tanfous Beach & Aquapark">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Chambres -->
+<section class="rooms-preview">
+  <div class="container">
+    <h2>Nos chambres confortables</h2>
+    <p>Des chambres modernes et spacieuses pour tous les voyageurs</p>
+    <div class="rooms-grid">
+      <div class="room-preview">
+        <img src="assets/roomsImg/img1.jpg" alt="Chambre Double">
+        <div class="room-info">
+          <h3>Chambre Double</h3>
+          <p>Idéale pour les couples</p>
+          <span class="price">À partir de 250 DT/nuit</span>
+          <button routerLink="/chambres">Voir plus</button>
+        </div>
+      </div>
+      <div class="room-preview">
+        <img src="assets/roomsImg/img2.jpg" alt="Chambre Triple">
+        <div class="room-info">
+          <h3>Chambre Triple</h3>
+          <p>Parfaite pour les familles</p>
+          <span class="price">À partir de 320 DT/nuit</span>
+          <button routerLink="/chambres">Voir plus</button>
+        </div>
+      </div>
+      <div class="room-preview">
+        <img src="assets/roomsImg/img3.jpg" alt="Chambre Quadruple">
+        <div class="room-info">
+          <h3>Chambre Quadruple</h3>
+          <p>Parfaite pour les groupes ou familles nombreuses</p>
+          <span class="price">À partir de 380 DT/nuit</span>
+          <button routerLink="/chambres">Voir plus</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Activités -->
+<section class="activities-preview">
+  <div class="container">
+    <h2>Loisirs & Activités</h2>
+    <p>Profitez d'activités variées pour tous les âges</p>
+    <div class="activities-grid">
+      <div class="activity-preview">
+        <div class="activity-icon">🏊‍♂️</div>
+        <h3>Aquapark</h3>
+        <p>7 toboggans, piscines pour tous les âges, mini-club pour enfants</p>
+      </div>
+      <div class="activity-preview">
+        <div class="activity-icon">🏖️</div>
+        <h3>Plage privée</h3>
+        <p>Plage de sable fin avec transats et parasols inclus</p>
+      </div>
+      <div class="activity-preview">
+        <div class="activity-icon">🎭</div>
+        <h3>Animations</h3>
+        <p>Spectacles, soirées à thème, activités sportives</p>
+      </div>
+      <div class="activity-preview">
+        <div class="activity-icon">🎾</div>
+        <h3>Sports</h3>
+        <p>Tennis, volley-ball, pétanque, activités nautiques</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Appel à l'action -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Prêt pour des vacances inoubliables ?</h2>
+      <p>Réservez dès maintenant et profitez de nos offres spéciales</p>
+      <div class="cta-buttons">
+        <button class="btn-primary" routerLink="/reservation">Réserver maintenant</button>
+        <button class="btn-outline" routerLink="/contact">Nous contacter</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sections existantes -->
+<!-- <app-section2></app-section2> -->
+<app-section3></app-section3>
+<app-section4></app-section4>
+<!-- <app-section5></app-section5> -->
+<app-section6></app-section6>
+@defer{
+<!-- <app-section7></app-section7> -->
+}
+<app-section8></app-section8>

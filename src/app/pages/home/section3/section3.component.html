@@ -1,0 +1,32 @@
+<section class="section-3">
+    @if(result){
+        <div class="about-vid">
+            <div class="video-pattern" (click)="setFalse()">X</div>
+            <video src="./assets/about/about-video.mp4" (ended)="setFalse()" (loadeddata)="playVideo(video)" #video controls></video>
+        </div>
+    }
+    <div class="container section3-main">
+        <div class="about-video">
+            <div class="about-play" (click)="setTrue()">
+                <i class="bx bx-play"></i>
+            </div>
+            <img src="./assets/roomsImg/img2.jpg" alt="about-video-img" class="about-video-img" (click)="setTrue()">
+            <div class="about-img">
+                <img src="./assets/roomsImg/img1.jpg" alt="about-img">
+            </div>
+        </div>
+        <div class="about-text">
+            <div class="about-title">
+                <h1>About Us</h1>
+                <div class="about-title-border"></div>
+            </div>
+            <p class="about-subtitle">
+                Welcome to tanfous, where comfort meets color and style. Located in a lively setting, we offer cozy, modern rooms and a warm atmosphere for a relaxing stay. Whether you're traveling for fun or work, you'll feel right at home.
+            </p>
+            <button class="about-btn" (click)="setTrue()">
+                <p>WATCH VIDEO</p>
+                <i class="bx bxs-right-arrow-alt"></i>
+            </button>
+        </div>
+    </div>
+</section>
