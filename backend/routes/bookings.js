@@ -1,5 +1,6 @@
 const express = require('express');
 const { body, validationResult, query } = require('express-validator');
+const { Op } = require('sequelize');
 const { Booking, Room, User } = require('../models');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -114,73 +115,59 @@ router.get('/:id', protect, async (req, res) => {
 // @route   POST /api/bookings
 // @desc    Create new booking
 // @access  Private
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, [
+  body('roomType').notEmpty().withMessage('Room type is required'),
+  body('checkIn').isISO8601().withMessage('Valid check-in date is required'),
+  body('checkOut').isISO8601().withMessage('Valid check-out date is required'),
+  body('guestsAdults').isInt({ min: 1 }).withMessage('At least 1 adult is required'),
+  body('guestsChildren').optional().isInt({ min: 0 }).withMessage('Children count cannot be negative'),
+  body('contactPhone').notEmpty().withMessage('Phone number is required'),
+  body('contactEmail').isEmail().withMessage('Valid email is required')
+], async (req, res) => {
   try {
-    // Accept the new payload from frontend
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
     const {
-      firstName,
-      lastName,
       contactEmail,
       contactPhone,
       roomType,
       checkIn,
       checkOut,
       guestsAdults,
+      guestsChildren = 0,
       specialRequests,
-      status
+      status = 'pending'
     } = req.body;
 
-    // Validate required fields
-    if (!contactEmail || !checkIn || !checkOut || !guestsAdults) {
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+
+    // Validate dates
+    if (checkInDate >= checkOutDate) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields.'
+        message: 'Check-out date must be after check-in date'
       });
     }
 
-    // Generate a unique bookingId
-    const bookingId = 'BK' + Date.now();
+    if (checkInDate < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Check-in date cannot be in the past'
+      });
+    }
 
-    // Find a Room by type (for demo; ideally, user selects a specific room)
+    // Find the room by type
     const room = await Room.findOne({ where: { type: roomType } });
     if (!room) {
       return res.status(404).json({
-        success: false,
-        message: 'Room not found.'
-      });
-    }
-
-    // Store booking in DB with 'pending' status
-    const booking = await Booking.create({
-      bookingId,
-      userId: req.user.id,
-      roomId: room.id,
-      checkIn,
-      checkOut,
-      guestsAdults,
-      guestsChildren: 0,
-      totalAmount: room.price, // or calculate based on nights, etc.
-      status: status || 'pending',
-      paymentStatus: 'pending',
-      paymentMethod: 'none',
-      specialRequests,
-      contactPhone,
-      contactEmail
-    });
-
-    res.status(201).json({
-      success: true,
-      message: 'Reservation request submitted and pending admin approval.',
-      booking
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error',
-      error: error.message
-    });
-  }
-});
         success: false,
         message: 'Room not found'
       });
@@ -194,7 +181,7 @@ router.post('/', protect, async (req, res) => {
     }
 
     // Check room capacity
-    if (guests.adults > room.capacity.adults || guests.children > room.capacity.children) {
+    if (guestsAdults > room.capacityAdults || guestsChildren > room.capacityChildren) {
       return res.status(400).json({
         success: false,
         message: 'Room capacity exceeded'
@@ -202,10 +189,9 @@ router.post('/', protect, async (req, res) => {
     }
 
     // Check if room is already booked for these dates
-    const { Op } = require('sequelize');
     const conflictingBooking = await Booking.findOne({
       where: {
-        roomId: roomId,
+        roomId: room.id,
         status: ['confirmed', 'checked-in'],
         checkIn: { [Op.lt]: checkOutDate },
         checkOut: { [Op.gt]: checkInDate }
@@ -223,17 +209,24 @@ router.post('/', protect, async (req, res) => {
     const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
     const totalAmount = nights * room.price;
 
+    // Generate a unique bookingId
+    const bookingId = 'BK' + Date.now();
+
     // Create booking
     const booking = await Booking.create({
+      bookingId,
       userId: req.user.id,
-      roomId: roomId,
+      roomId: room.id,
       checkIn: checkInDate,
       checkOut: checkOutDate,
-      guestsAdults: guests.adults,
-      guestsChildren: guests.children || 0,
+      guestsAdults,
+      guestsChildren,
       totalAmount,
-      contactPhone: contactInfo.phone,
-      contactEmail: contactInfo.email,
+      status,
+      paymentStatus: 'pending',
+      paymentMethod: 'none',
+      contactPhone,
+      contactEmail,
       specialRequests,
       nights
     });
