@@ -1,21 +1,29 @@
-<div class="header-hero">
-  <img
-    src="./assets/gallery/background-1.jpg"
-    alt="background1"
-    style="display: none"
-  />
-  <img
-    src="./assets/gallery/background-2.jpg"
-    alt="background2"
-    style="display: none"
-  />
-  <img
-    src="./assets/headerHeroImg/background-3.jpg"
-    alt="background3"
-    style="display: none"
-  />
-  <div class="hero-pattern"></div>
-  <app-header></app-header>
-  <router-outlet></router-outlet>
-  <app-footer></app-footer>
+<div class="app-container">
+  <!-- Admin Layout -->
+  <div *ngIf="isAdminRoute" class="admin-layout">
+    <router-outlet></router-outlet>
+  </div>
+  
+  <!-- Main Website Layout -->
+  <div *ngIf="!isAdminRoute" class="header-hero">
+    <img
+      src="./assets/gallery/background-1.jpg"
+      alt="background1"
+      style="display: none"
+    />
+    <img
+      src="./assets/gallery/background-2.jpg"
+      alt="background2"
+      style="display: none"
+    />
+    <img
+      src="./assets/headerHeroImg/background-3.jpg"
+      alt="background3"
+      style="display: none"
+    />
+    <div class="hero-pattern"></div>
+    <app-header></app-header>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
+  </div>
 </div>

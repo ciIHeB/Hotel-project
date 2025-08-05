@@ -1,0 +1,125 @@
+<div class="admin-users">
+  <div class="page-header">
+    <h1>Users Management</h1>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-bar">
+      <input 
+        type="text" 
+        placeholder="Search users..." 
+        [(ngModel)]="searchTerm" 
+        (input)="filterUsers()"
+        class="search-input">
+    </div>
+    
+    <div class="role-filter">
+      <select [(ngModel)]="roleFilter" (change)="filterUsers()" class="filter-select">
+        <option value="all">All Roles</option>
+        <option value="guest">Guests</option>
+        <option value="admin">Admins</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="users-table" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td class="user-info">
+            <div class="user-name">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="user-id">ID: {{ user.id }}</div>
+          </td>
+          <td class="email">{{ user.email }}</td>
+          <td class="phone">{{ user.phone }}</td>
+          <td>
+            <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+              {{ user.role }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(user.isActive)">
+              {{ user.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>{{ formatDate(user.createdAt || '') }}</td>
+          <td class="actions">
+            <button class="btn-edit" (click)="openModal(user)">Edit</button>
+            <button class="btn-toggle" (click)="toggleUserStatus(user)">
+              {{ user.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+            <button class="btn-delete" (click)="deleteUser(user)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading users...</p>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editMode ? 'Edit User' : 'Add User' }}</h2>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <form class="modal-form" (ngSubmit)="saveUser()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" [(ngModel)]="currentUser.firstName" name="firstName" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" [(ngModel)]="currentUser.lastName" name="lastName" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="currentUser.email" name="email" required>
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" [(ngModel)]="currentUser.phone" name="phone" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Role</label>
+            <select [(ngModel)]="currentUser.role" name="role" required>
+              <option *ngFor="let role of userRoles" [value]="role">{{ role }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="currentUser.isActive" name="isActive">
+              <span>Active</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn-save">{{ editMode ? 'Update' : 'Create' }} User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

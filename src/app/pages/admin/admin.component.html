@@ -1,0 +1,83 @@
+<div class="admin-dashboard">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+
+  <div class="admin-nav">
+    <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
+    <a routerLink="/admin/rooms" routerLinkActive="active">Rooms</a>
+    <a routerLink="/admin/bookings" routerLinkActive="active">Bookings</a>
+    <a routerLink="/admin/users" routerLinkActive="active">Users</a>
+  </div>
+
+  <div class="dashboard-content" *ngIf="!loading">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🏨</div>
+        <div class="stat-info">
+          <h3>{{ stats.totalRooms }}</h3>
+          <p>Total Rooms</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <h3>{{ stats.totalBookings }}</h3>
+          <p>Total Bookings</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3>{{ stats.activeBookings }}</h3>
+          <p>Active Bookings</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3>{{ stats.totalUsers }}</h3>
+          <p>Total Users</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="recent-bookings">
+      <h2>Recent Bookings</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Guest</th>
+              <th>Room</th>
+              <th>Check-in</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of recentBookings">
+              <td>{{ booking.bookingId }}</td>
+              <td>{{ booking.User?.firstName }} {{ booking.User?.lastName }}</td>
+              <td>{{ booking.Room?.roomNumber }}</td>
+              <td>{{ booking.checkIn | date:'short' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="booking.status">
+                  {{ booking.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading dashboard...</p>
+  </div>
+</div>

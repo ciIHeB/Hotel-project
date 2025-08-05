@@ -61,6 +61,14 @@ export class HeaderComponent implements OnInit{
       link:"contact",
       title:"CONTACT",
     },
+    {
+      link:"login",
+      title:"LOGIN",
+    },
+    {
+      link:"register",
+      title:"REGISTER",
+    },
   ];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}

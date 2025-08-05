@@ -1,0 +1,139 @@
+<div class="admin-bookings">
+  <div class="page-header">
+    <h1>Bookings Management</h1>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-bar">
+      <input 
+        type="text" 
+        placeholder="Search bookings..." 
+        [(ngModel)]="searchTerm" 
+        (input)="filterBookings()"
+        class="search-input">
+    </div>
+    
+    <div class="status-filter">
+      <select [(ngModel)]="statusFilter" (change)="filterBookings()" class="filter-select">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="checked-in">Checked In</option>
+        <option value="checked-out">Checked Out</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="bookings-table" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Booking ID</th>
+          <th>Guest</th>
+          <th>Room</th>
+          <th>Check-in</th>
+          <th>Check-out</th>
+          <th>Nights</th>
+          <th>Guests</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let booking of filteredBookings">
+          <td class="booking-id">{{ booking.bookingId }}</td>
+          <td class="guest-info">
+            <div class="guest-name">{{ booking.User?.firstName }} {{ booking.User?.lastName }}</div>
+            <div class="guest-email">{{ booking.User?.email }}</div>
+          </td>
+          <td class="room-info">
+            <div class="room-number">{{ booking.Room?.roomNumber }}</div>
+            <div class="room-type">{{ booking.Room?.type }}</div>
+          </td>
+          <td>{{ formatDate(booking.checkIn) }}</td>
+          <td>{{ formatDate(booking.checkOut) }}</td>
+          <td class="nights">{{ booking.nights }}</td>
+          <td class="guests">{{ booking.guestsAdults }}A + {{ booking.guestsChildren }}C</td>
+          <td class="total">${{ booking.totalAmount }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+              {{ booking.status }}
+            </span>
+          </td>
+          <td>
+            <span class="payment-badge" [ngClass]="getPaymentStatusClass(booking.paymentStatus)">
+              {{ booking.paymentStatus }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-edit" (click)="openModal(booking)">Edit</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading bookings...</p>
+  </div>
+
+  <!-- Edit Booking Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Edit Booking</h2>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <form class="modal-form" (ngSubmit)="updateBooking()">
+        <div class="booking-details">
+          <div class="detail-row">
+            <span class="label">Booking ID:</span>
+            <span class="value">{{ currentBooking.bookingId }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Guest:</span>
+            <span class="value">{{ currentBooking.User?.firstName }} {{ currentBooking.User?.lastName }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Room:</span>
+            <span class="value">{{ currentBooking.Room?.roomNumber }} ({{ currentBooking.Room?.type }})</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Status</label>
+            <select [(ngModel)]="currentBooking.status" name="status" required>
+              <option *ngFor="let status of bookingStatuses" [value]="status">{{ status }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Payment Status</label>
+            <select [(ngModel)]="currentBooking.paymentStatus" name="paymentStatus" required>
+              <option *ngFor="let status of paymentStatuses" [value]="status">{{ status }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Special Requests</label>
+          <textarea [(ngModel)]="currentBooking.specialRequests" name="specialRequests" rows="3"></textarea>
+        </div>
+
+        <div class="form-group" *ngIf="currentBooking.status === 'cancelled'">
+          <label>Cancellation Reason</label>
+          <textarea [(ngModel)]="currentBooking.cancellationReason" name="cancellationReason" rows="2"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn-save">Update Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
