@@ -69,6 +69,8 @@
             </span>
           </td>
           <td class="actions">
+            <button class="btn-approve" *ngIf="booking.status === 'pending'" (click)="approve(booking)">Approve</button>
+            <button class="btn-reject" *ngIf="booking.status === 'pending'" (click)="reject(booking)">Reject</button>
             <button class="btn-edit" (click)="openModal(booking)">Edit</button>
           </td>
         </tr>

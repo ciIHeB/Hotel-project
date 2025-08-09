@@ -6,14 +6,12 @@ import { ActivitiesComponent } from './pages/activities/activities.component';
 import { WellnessComponent } from './pages/wellness/wellness.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { ContactComponent } from './pages/contact/contact.component';
-import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { AuthGuard } from './services/auth.guard';
 import { AdminGuard } from './services/admin.guard';
 import { AdminComponent } from './pages/admin/admin.component';
 import { AdminRoomsComponent } from './pages/admin/rooms/admin-rooms.component';
 import { AdminBookingsComponent } from './pages/admin/bookings/admin-bookings.component';
 import { AdminUsersComponent } from './pages/admin/users/admin-users.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
     {
@@ -50,7 +48,7 @@ export const routes: Routes = [
         path: "reservation",
         component: BookingComponent,
         title: "Réservation - Hôtel Tanfous Beach & Aquapark",
-        canActivate: [AuthGuard]
+        
     },
     {
         path: "contact",
@@ -58,33 +56,32 @@ export const routes: Routes = [
         title: "Contact & Accès - Hôtel Tanfous Beach & Aquapark",
     },
     {
-        path: "login",
+        path: "admin-login",
         component: LoginComponent,
-        title: "Login"
-    },
-    {
-        path: "register",
-        component: RegisterComponent,
-        title: "Register"
+        title: "Admin Login"
     },
     {
         path: "admin",
         component: AdminComponent,
+        canActivate: [AdminGuard],
         title: "Admin Dashboard"
     },
     {
         path: "admin/rooms",
         component: AdminRoomsComponent,
+        canActivate: [AdminGuard],
         title: "Admin - Rooms Management"
     },
     {
         path: "admin/bookings",
         component: AdminBookingsComponent,
+        canActivate: [AdminGuard],
         title: "Admin - Bookings Management"
     },
     {
         path: "admin/users",
         component: AdminUsersComponent,
+        canActivate: [AdminGuard],
         title: "Admin - Users Management"
     }
 ];

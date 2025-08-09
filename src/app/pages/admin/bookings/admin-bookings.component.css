@@ -218,14 +218,53 @@ td {
 
 .actions {
   text-align: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-approve {
+  padding: 0.4rem 0.8rem;
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-approve:hover {
+  background: rgba(40, 167, 69, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-reject {
+  padding: 0.4rem 0.8rem;
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-reject:hover {
+  background: rgba(220, 53, 69, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-edit {
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   background: rgba(23, 162, 184, 0.2);
   color: #17a2b8;
   border: 1px solid rgba(23, 162, 184, 0.3);
-  border-radius: 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -233,7 +272,7 @@ td {
 
 .btn-edit:hover {
   background: rgba(23, 162, 184, 0.3);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 /* Modal Styles */

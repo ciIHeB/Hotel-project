@@ -50,6 +50,7 @@ export interface User {
   lastName: string;
   email: string;
   phone: string;
+  password?: string;
   role: string;
   isActive: boolean;
   profileImage?: string;
@@ -75,12 +76,48 @@ export class AdminService {
     return this.http.get(`${this.apiUrl}/rooms/${id}`);
   }
 
-  createRoom(room: Room): Observable<any> {
-    return this.http.post(`${this.apiUrl}/rooms`, room);
+  createRoom(room: Room, files?: File[]): Observable<any> {
+    const form = new FormData();
+    form.append('roomNumber', room.roomNumber);
+    form.append('type', room.type);
+    form.append('title', room.title);
+    form.append('description', room.description);
+    form.append('price', String(room.price));
+    form.append('capacityAdults', String(room.capacityAdults));
+    form.append('capacityChildren', String(room.capacityChildren ?? 0));
+    form.append('bedType', room.bedType);
+    form.append('size', String(room.size));
+    form.append('isAvailable', String(room.isAvailable));
+    form.append('floor', String(room.floor));
+    form.append('smokingAllowed', String(room.smokingAllowed));
+    form.append('petFriendly', String(room.petFriendly));
+    if (room.amenities) form.append('amenities', JSON.stringify(room.amenities));
+    if (files && files.length) {
+      files.forEach(f => form.append('images', f));
+    }
+    return this.http.post(`${this.apiUrl}/rooms`, form);
   }
 
-  updateRoom(id: number, room: Room): Observable<any> {
-    return this.http.put(`${this.apiUrl}/rooms/${id}`, room);
+  updateRoom(id: number, room: Room, files?: File[]): Observable<any> {
+    const form = new FormData();
+    if (room.roomNumber) form.append('roomNumber', room.roomNumber);
+    if (room.type) form.append('type', room.type);
+    if (room.title) form.append('title', room.title);
+    if (room.description) form.append('description', room.description);
+    if (room.price !== undefined) form.append('price', String(room.price));
+    if (room.capacityAdults !== undefined) form.append('capacityAdults', String(room.capacityAdults));
+    if (room.capacityChildren !== undefined) form.append('capacityChildren', String(room.capacityChildren));
+    if (room.bedType) form.append('bedType', room.bedType);
+    if (room.size !== undefined) form.append('size', String(room.size));
+    if (room.isAvailable !== undefined) form.append('isAvailable', String(room.isAvailable));
+    if (room.floor !== undefined) form.append('floor', String(room.floor));
+    if (room.smokingAllowed !== undefined) form.append('smokingAllowed', String(room.smokingAllowed));
+    if (room.petFriendly !== undefined) form.append('petFriendly', String(room.petFriendly));
+    if (room.amenities) form.append('amenities', JSON.stringify(room.amenities));
+    if (files && files.length) {
+      files.forEach(f => form.append('images', f));
+    }
+    return this.http.put(`${this.apiUrl}/rooms/${id}`, form);
   }
 
   deleteRoom(id: number): Observable<any> {
@@ -96,8 +133,16 @@ export class AdminService {
     return this.http.get(`${this.apiUrl}/bookings/${id}`);
   }
 
-  updateBooking(id: number, booking: Partial<Booking>): Observable<any> {
-    return this.http.put(`${this.apiUrl}/bookings/${id}`, booking);
+  updateBookingStatus(id: number, body: { status: string; cancellationReason?: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/bookings/${id}/status`, body);
+  }
+
+  approveBooking(id: number): Observable<any> {
+    return this.updateBookingStatus(id, { status: 'confirmed' });
+  }
+
+  rejectBooking(id: number, cancellationReason?: string): Observable<any> {
+    return this.updateBookingStatus(id, { status: 'cancelled', cancellationReason });
   }
 
   // Users CRUD
@@ -107,6 +152,10 @@ export class AdminService {
 
   getUser(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/${id}`);
+  }
+
+  createUser(user: Partial<User>): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users`, user);
   }
 
   updateUser(id: number, user: Partial<User>): Observable<any> {

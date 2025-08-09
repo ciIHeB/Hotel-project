@@ -145,6 +145,19 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <label>Room Photos</label>
+          <input type="file" multiple accept="image/*" (change)="onFilesSelected($event)">
+          <div class="preview-grid" *ngIf="selectedFiles.length || (currentRoom.images && currentRoom.images.length)">
+            <div class="preview" *ngFor="let img of (currentRoom.images || [])">
+              <img [src]="img" alt="room image" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px;">
+            </div>
+            <div class="preview" *ngFor="let f of selectedFiles">
+              <span>{{ f.name }}</span>
+            </div>
+          </div>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label class="checkbox-label">

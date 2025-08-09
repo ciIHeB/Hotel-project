@@ -77,8 +77,12 @@ export class AdminBookingsComponent implements OnInit {
   }
 
   updateBooking() {
-    if (this.currentBooking.id) {
-      this.adminService.updateBooking(this.currentBooking.id, this.currentBooking).subscribe({
+    if (this.currentBooking.id && this.currentBooking.status) {
+      // Use status endpoint for consistency
+      this.adminService.updateBookingStatus(this.currentBooking.id, {
+        status: this.currentBooking.status,
+        cancellationReason: this.currentBooking.cancellationReason
+      }).subscribe({
         next: () => {
           this.loadBookings();
           this.closeModal();
@@ -113,5 +117,22 @@ export class AdminBookingsComponent implements OnInit {
 
   calculateTotal(booking: Booking): number {
     return booking.totalAmount || 0;
+  }
+
+  approve(booking: Booking) {
+    if (!booking.id) return;
+    this.adminService.approveBooking(booking.id).subscribe({
+      next: () => this.loadBookings(),
+      error: (err) => console.error('Error approving booking:', err)
+    });
+  }
+
+  reject(booking: Booking) {
+    if (!booking.id) return;
+    const reason = prompt('Reason for rejection (optional):') || undefined;
+    this.adminService.rejectBooking(booking.id, reason).subscribe({
+      next: () => this.loadBookings(),
+      error: (err) => console.error('Error rejecting booking:', err)
+    });
   }
 }

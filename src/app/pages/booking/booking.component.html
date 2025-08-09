@@ -18,7 +18,7 @@
     </div>
 
     <div class="booking-form-container">
-      <form (ngSubmit)="onSubmit()" #bookingFormElement="ngForm" class="booking-form">
+<form (ngSubmit)="onSubmit()" #bookingFormElement="ngForm" class="booking-form">
         <div class="form-row">
           <div class="form-group">
             <label for="firstName">Prénom *</label>
@@ -75,15 +75,31 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="guests">Nombre de personnes *</label>
+            <label for="guestsAdults">Adultes *</label>
             <input 
               type="number" 
-              id="guests" 
-              name="guests"
-              [(ngModel)]="bookingForm.guests" 
+              id="guestsAdults" 
+              name="guestsAdults"
+              [(ngModel)]="bookingForm.guestsAdults" 
               min="1" 
               max="6" 
               required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="guestsChildren">Enfants</label>
+            <input 
+              type="number" 
+              id="guestsChildren" 
+              name="guestsChildren"
+              [(ngModel)]="bookingForm.guestsChildren" 
+              min="0" 
+              max="4">
+          </div>
+          <div class="form-group">
+            <!-- Empty for layout -->
           </div>
         </div>
 
@@ -118,8 +134,13 @@
             placeholder="Demandes particulières, préférences alimentaires, etc."></textarea>
         </div>
 
-        <button type="submit" class="submit-btn" [disabled]="!bookingFormElement.form.valid">
-          Envoyer la demande
+        <div class="error-message" *ngIf="submitError" style="color: red; margin-bottom: 1em;">
+          {{ submitError }}
+        </div>
+        
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Envoyer la demande</span>
+          <span *ngIf="isSubmitting">Envoi en cours...</span>
         </button>
       </form>
     </div>
@@ -129,7 +150,8 @@
   <div class="confirmation-message" *ngIf="isSubmitted">
     <div class="confirmation-content">
       <h3>✅ Demande envoyée avec succès !</h3>
-      <p>Votre demande de réservation a bien été envoyée. Notre équipe vous contactera dans les plus brefs délais pour confirmer votre séjour.</p>
+      <p>Votre demande de réservation a bien été envoyée et est en attente d'approbation par notre équipe.</p>
+      <p>Vous recevrez un email de confirmation une fois votre réservation approuvée.</p>
       <p>Merci de votre confiance !</p>
     </div>
   </div>

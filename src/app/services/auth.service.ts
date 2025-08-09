@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface User {
   id: number;
@@ -23,22 +24,21 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = `${environment.apiUrl}/admin`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
     // Check if user is already logged in
-    const token = localStorage.getItem('token');
-    if (token) {
-      this.loadCurrentUser();
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        this.loadCurrentUser();
+      }
     }
   }
 
-  register(userData: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData)
-      .pipe(catchError(this.handleError));
-  }
+  // Note: User registration is disabled. No register method.
 
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
@@ -55,12 +55,17 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('token');
+    }
     this.currentUserSubject.next(null);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    if (isPlatformBrowser(this.platformId)) {
+      return !!localStorage.getItem('token');
+    }
+    return false;
   }
 
   getCurrentUser(): User | null {
@@ -68,7 +73,10 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
 
   private loadCurrentUser(): void {

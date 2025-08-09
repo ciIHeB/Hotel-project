@@ -98,6 +98,15 @@ export class AdminUsersComponent implements OnInit {
         },
         error: (error) => console.error('Error updating user:', error)
       });
+    } else {
+      // Create new user
+      this.adminService.createUser(this.currentUser).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.closeModal();
+        },
+        error: (error) => console.error('Error creating user:', error)
+      });
     }
   }
 

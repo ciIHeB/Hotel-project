@@ -35,7 +35,12 @@ export class LoginComponent {
       next: (response) => {
         this.loading = false;
         if (response.success) {
-          this.router.navigate(['/']);
+          const user = response.user;
+          if (user && user.role === 'admin') {
+            this.router.navigate(['/admin']);
+          } else {
+            this.router.navigate(['/']);
+          }
         } else {
           this.error = response.message || 'Login failed';
         }

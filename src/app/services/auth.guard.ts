@@ -1,19 +1,18 @@
+// This file is deprecated - user auth has been removed
+// Only AdminGuard is used for admin-only routes
+
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private router: Router) {}
 
   canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
-      return true;
-    } else {
-      this.router.navigate(['/login']);
-      return false;
-    }
+    // Always redirect to home since user auth is disabled
+    this.router.navigate(['/']);
+    return false;
   }
 }

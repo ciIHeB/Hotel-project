@@ -17,6 +17,7 @@ export class AdminRoomsComponent implements OnInit {
   showModal = false;
   editMode = false;
   searchTerm = '';
+  selectedFiles: File[] = [];
 
   currentRoom: Room = {
     roomNumber: '',
@@ -81,6 +82,7 @@ export class AdminRoomsComponent implements OnInit {
     if (room) {
       this.editMode = true;
       this.currentRoom = { ...room };
+      this.selectedFiles = [];
     } else {
       this.editMode = false;
       this.currentRoom = {
@@ -100,6 +102,7 @@ export class AdminRoomsComponent implements OnInit {
         smokingAllowed: false,
         petFriendly: false
       };
+      this.selectedFiles = [];
     }
   }
 
@@ -110,7 +113,7 @@ export class AdminRoomsComponent implements OnInit {
 
   saveRoom() {
     if (this.editMode && this.currentRoom.id) {
-      this.adminService.updateRoom(this.currentRoom.id, this.currentRoom).subscribe({
+      this.adminService.updateRoom(this.currentRoom.id, this.currentRoom, this.selectedFiles).subscribe({
         next: () => {
           this.loadRooms();
           this.closeModal();
@@ -118,7 +121,7 @@ export class AdminRoomsComponent implements OnInit {
         error: (error) => console.error('Error updating room:', error)
       });
     } else {
-      this.adminService.createRoom(this.currentRoom).subscribe({
+      this.adminService.createRoom(this.currentRoom, this.selectedFiles).subscribe({
         next: () => {
           this.loadRooms();
           this.closeModal();
@@ -150,5 +153,12 @@ export class AdminRoomsComponent implements OnInit {
 
   isAmenitySelected(amenity: string): boolean {
     return this.currentRoom.amenities.includes(amenity);
+  }
+
+  onFilesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      this.selectedFiles = Array.from(input.files);
+    }
   }
 }

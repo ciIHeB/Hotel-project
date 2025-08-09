@@ -2,14 +2,14 @@ const express = require('express');
 const { body, validationResult, query } = require('express-validator');
 const { Op } = require('sequelize');
 const { Booking, Room, User } = require('../models');
-const { protect, authorize } = require('../middleware/auth');
+const { adminProtect } = require('../middleware/auth');
 
 const router = express.Router();
 
 // @route   GET /api/bookings
-// @desc    Get user's bookings or all bookings (admin)
-// @access  Private
-router.get('/', protect, [
+// @desc    Get all bookings (admin)
+// @access  Private (Admin)
+router.get('/', adminProtect, [
   query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
   query('limit').optional().isInt({ min: 1, max: 50 }).withMessage('Limit must be between 1 and 50'),
   query('status').optional().isIn(['pending', 'confirmed', 'checked-in', 'checked-out', 'cancelled']).withMessage('Invalid status')
@@ -30,17 +30,12 @@ router.get('/', protect, [
 
     // Build filter
     let filter = {};
-    
-    // If not admin, only show user's bookings
-    if (req.user.role !== 'admin') {
-      filter.userId = req.user.id;
-    }
 
     if (req.query.status) {
       filter.status = req.query.status;
     }
 
-    if (req.query.userId && req.user.role === 'admin') {
+    if (req.query.userId) {
       filter.userId = req.query.userId;
     }
 
@@ -73,9 +68,9 @@ router.get('/', protect, [
 });
 
 // @route   GET /api/bookings/:id
-// @desc    Get single booking
-// @access  Private
-router.get('/:id', protect, async (req, res) => {
+// @desc    Get single booking (admin)
+// @access  Private (Admin)
+router.get('/:id', adminProtect, async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id, {
       include: [
@@ -91,13 +86,7 @@ router.get('/:id', protect, async (req, res) => {
       });
     }
 
-    // Check if user owns the booking or is admin
-    if (booking.userId !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: 'Not authorized to access this booking'
-      });
-    }
+    // Admin-only endpoint; access granted via adminProtect
 
     res.json({
       success: true,
@@ -114,8 +103,8 @@ router.get('/:id', protect, async (req, res) => {
 
 // @route   POST /api/bookings
 // @desc    Create new booking
-// @access  Private
-router.post('/', protect, [
+// @access  Public (guest bookings allowed)
+router.post('/', [
   body('roomType').notEmpty().withMessage('Room type is required'),
   body('checkIn').isISO8601().withMessage('Valid check-in date is required'),
   body('checkOut').isISO8601().withMessage('Valid check-out date is required'),
@@ -142,8 +131,7 @@ router.post('/', protect, [
       checkOut,
       guestsAdults,
       guestsChildren = 0,
-      specialRequests,
-      status = 'pending'
+      specialRequests
     } = req.body;
 
     const checkInDate = new Date(checkIn);
@@ -212,17 +200,17 @@ router.post('/', protect, [
     // Generate a unique bookingId
     const bookingId = 'BK' + Date.now();
 
-    // Create booking
+    // Create booking (userId optional for guests)
     const booking = await Booking.create({
       bookingId,
-      userId: req.user.id,
+      userId: (req.user && req.user.id) ? req.user.id : null,
       roomId: room.id,
       checkIn: checkInDate,
       checkOut: checkOutDate,
       guestsAdults,
       guestsChildren,
       totalAmount,
-      status,
+      status: 'pending',
       paymentStatus: 'pending',
       paymentMethod: 'none',
       contactPhone,
@@ -254,8 +242,8 @@ router.post('/', protect, [
 
 // @route   PUT /api/bookings/:id/status
 // @desc    Update booking status
-// @access  Private (Admin or booking owner for cancellation)
-router.put('/:id/status', protect, [
+// @access  Private (Admin)
+router.put('/:id/status', adminProtect, [
   body('status').isIn(['pending', 'confirmed', 'checked-in', 'checked-out', 'cancelled']).withMessage('Invalid status'),
   body('cancellationReason').optional().isLength({ max: 200 }).withMessage('Cancellation reason cannot exceed 200 characters')
 ], async (req, res) => {
@@ -279,24 +267,7 @@ router.put('/:id/status', protect, [
       });
     }
 
-    // Check permissions
-    const isOwner = booking.userId === req.user.id;
-    const isAdmin = req.user.role === 'admin';
-
-    if (!isAdmin && !isOwner) {
-      return res.status(403).json({
-        success: false,
-        message: 'Not authorized to update this booking'
-      });
-    }
-
-    // Only allow cancellation for non-admin users
-    if (!isAdmin && status !== 'cancelled') {
-      return res.status(403).json({
-        success: false,
-        message: 'You can only cancel your booking'
-      });
-    }
+    // Admin-only permissions enforced by adminProtect
 
     // Update booking
     const updateData = { status };

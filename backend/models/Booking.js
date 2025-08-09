@@ -11,7 +11,7 @@ Booking.init({
   },
   userId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   roomId: {
     type: DataTypes.INTEGER,

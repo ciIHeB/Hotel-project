@@ -1,6 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 import { RouterModule } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -24,6 +25,40 @@ import { isPlatformBrowser } from '@angular/common';
   ]
 })
 export class HeaderComponent implements OnInit{
+  isLoggedIn = false;
+
+  constructor(
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
+
+  ngOnInit(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+    this.authService.currentUser$.subscribe(() => {
+      this.isLoggedIn = this.authService.isLoggedIn();
+    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.header = document.querySelector("header");
+      window.addEventListener('scroll',() => {
+        const section2 = document.querySelector(".section-2");
+        const sectRect = section2?.getBoundingClientRect();
+        if(this.header && sectRect) {
+          if(window.innerHeight >= sectRect.y + 150){
+            this.isOpen = false;
+            this.header.style.paddingBlock = '20px';
+          }else{
+            this.isOpen = true;
+            this.header.style.paddingBlock = '40px';
+          }
+        }
+      });
+    }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.isLoggedIn = false;
+  }
   isOpen:boolean = true;
   active:number = 0;
   header: HTMLElement | null = null;
@@ -61,34 +96,7 @@ export class HeaderComponent implements OnInit{
       link:"contact",
       title:"CONTACT",
     },
-    {
-      link:"login",
-      title:"LOGIN",
-    },
-    {
-      link:"register",
-      title:"REGISTER",
-    },
+    
   ];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
-
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.header = document.querySelector("header");
-      window.addEventListener('scroll',() => {
-        const section2 = document.querySelector(".section-2");
-        const sectRect = section2?.getBoundingClientRect();
-        if(this.header && sectRect) {
-          if(window.innerHeight >= sectRect.y + 150){
-            this.isOpen = false;
-            this.header.style.paddingBlock = '20px';
-          }else{
-            this.isOpen = true;
-            this.header.style.paddingBlock = '40px';
-          }
-        }
-      });
-    }
-  }
 }
