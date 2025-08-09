@@ -96,6 +96,11 @@ export class HeaderComponent implements OnInit{
       link:"contact",
       title:"CONTACT",
     },
+    {
+      link:"suivi-reservation",
+      title:"suivi-reservation",
+    },
+    
     
   ];
 

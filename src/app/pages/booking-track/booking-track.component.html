@@ -1,0 +1,41 @@
+<div class="track">
+  
+
+  <br>
+  <br><br><br>
+  <br>
+
+  <div class="form">
+    <input [(ngModel)]="bookingId" placeholder="Référence de réservation" />
+    <button (click)="search()" [disabled]="loading">Rechercher</button>
+  </div>
+
+  <div class="state" *ngIf="loading">Recherche en cours...</div>
+  <div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+  <div class="card" *ngIf="!loading && result">
+    <div class="row">
+      <div><span class="label">Référence:</span> <span class="value">{{ result.bookingId }}</span></div>
+      <div><span class="label">Statut:</span> <span class="badge" [ngClass]="result.status">{{ result.status | uppercase }}</span></div>
+    </div>
+    <div class="row">
+      <div><span class="label">Arrivée:</span> <span class="value">{{ result.checkIn | date:'mediumDate' }}</span></div>
+      <div><span class="label">Départ:</span> <span class="value">{{ result.checkOut | date:'mediumDate' }}</span></div>
+    </div>
+    <div class="row">
+      <div><span class="label">Nuits:</span> <span class="value">{{ result.nights }}</span></div>
+      <div><span class="label">Montant estimé:</span> <span class="value">{{ result.totalAmount | number:'1.0-0' }} $</span></div>
+    </div>
+
+    <div class="room" *ngIf="result.Room">
+      <h3>Chambre</h3>
+      <div class="row">
+        <div><span class="label">Type:</span> <span class="value">{{ result.Room.title || result.Room.type }}</span></div>
+        <div><span class="label">Prix/nuit:</span> <span class="value">{{ result.Room.price | number:'1.0-0' }} $</span></div>
+      </div>
+      <div class="images" *ngIf="result.Room.images?.length">
+        <img *ngFor="let img of result.Room.images" [src]="img" alt="room" />
+      </div>
+    </div>
+  </div>
+</div>

@@ -54,7 +54,35 @@ export class AdminRoomsComponent implements OnInit {
     this.loading = true;
     this.adminService.getRooms().subscribe({
       next: (response) => {
-        this.rooms = response.data || [];
+        const raw = response?.data || [];
+        this.rooms = raw.map((r: any) => {
+          // Normalize arrays possibly stored as JSON strings
+          const normAmenities = Array.isArray(r?.amenities)
+            ? r.amenities
+            : (r?.amenities ? safeParseArray(r.amenities) : []);
+          const normImages = Array.isArray(r?.images)
+            ? r.images
+            : (r?.images ? safeParseArray(r.images) : []);
+
+          return {
+            id: r.id,
+            roomNumber: String(r.roomNumber ?? ''),
+            type: String(r.type ?? 'standard'),
+            title: String(r.title ?? ''),
+            description: String(r.description ?? ''),
+            price: Number(r.price ?? 0),
+            capacityAdults: Number(r.capacityAdults ?? 1),
+            capacityChildren: Number(r.capacityChildren ?? 0),
+            bedType: String(r.bedType ?? 'double'),
+            size: Number(r.size ?? 0),
+            amenities: normAmenities,
+            images: normImages,
+            isAvailable: Boolean(r.isAvailable ?? true),
+            floor: Number(r.floor ?? 1),
+            smokingAllowed: Boolean(r.smokingAllowed ?? false),
+            petFriendly: Boolean(r.petFriendly ?? false)
+          } as Room;
+        });
         this.filteredRooms = [...this.rooms];
         this.loading = false;
       },
@@ -81,7 +109,11 @@ export class AdminRoomsComponent implements OnInit {
     this.showModal = true;
     if (room) {
       this.editMode = true;
-      this.currentRoom = { ...room };
+      this.currentRoom = { 
+        ...room,
+        amenities: room.amenities ?? [],
+        images: room.images ?? []
+      };
       this.selectedFiles = [];
     } else {
       this.editMode = false;
@@ -160,5 +192,15 @@ export class AdminRoomsComponent implements OnInit {
     if (input.files && input.files.length) {
       this.selectedFiles = Array.from(input.files);
     }
+  }
+}
+
+// Safely parse a JSON array; return [] on failure
+function safeParseArray(value: any): any[] {
+  try {
+    const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
 }

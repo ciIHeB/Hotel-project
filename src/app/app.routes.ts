@@ -12,6 +12,7 @@ import { AdminRoomsComponent } from './pages/admin/rooms/admin-rooms.component';
 import { AdminBookingsComponent } from './pages/admin/bookings/admin-bookings.component';
 import { AdminUsersComponent } from './pages/admin/users/admin-users.component';
 import { LoginComponent } from './pages/login/login.component';
+import { BookingTrackComponent } from './pages/booking-track/booking-track.component';
 
 export const routes: Routes = [
     {
@@ -49,6 +50,11 @@ export const routes: Routes = [
         component: BookingComponent,
         title: "Réservation - Hôtel Tanfous Beach & Aquapark",
         
+    },
+    {
+        path: "suivi-reservation",
+        component: BookingTrackComponent,
+        title: "Suivi Réservation - Hôtel Tanfous Beach & Aquapark",
     },
     {
         path: "contact",

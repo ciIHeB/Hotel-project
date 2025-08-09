@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult, query } = require('express-validator');
 const { Op } = require('sequelize');
 const { Booking, Room, User } = require('../models');
+const { sendMail, bookingConfirmationTemplate, bookingStatusUpdateTemplate } = require('../utils/mailer');
 const { adminProtect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -269,6 +270,18 @@ router.post('/', [
       nights
     });
 
+    // Send confirmation email to guest
+    try {
+      await sendMail({
+        to: contactEmail,
+        subject: `Votre demande de réservation (${booking.bookingId})`,
+        html: bookingConfirmationTemplate({ booking })
+      });
+    } catch (e) {
+      console.error('Failed to send confirmation email:', e.message);
+    }
+
+    // Return populated booking
     const populatedBooking = await Booking.findByPk(booking.id, {
       include: [
         { model: Room, attributes: ['roomNumber', 'type', 'title', 'price', 'images'] },
@@ -333,23 +346,20 @@ router.put('/:id/status', adminProtect, [
       ]
     });
 
-    // Send email notification to user if status changed to confirmed or cancelled
-    if (['confirmed', 'cancelled'].includes(status) && updatedBooking.User?.email) {
-      const { sendMail } = require('../utils/mailer');
-      let subject = '', html = '';
-      if (status === 'confirmed') {
-        subject = 'Votre réservation a été confirmée';
-        html = `<p>Bonjour ${updatedBooking.User.firstName},<br><br>Votre réservation (<b>${updatedBooking.bookingId}</b>) pour la chambre <b>${updatedBooking.Room.title || updatedBooking.Room.type}</b> a été <b>confirmée</b>.<br>Nous avons hâte de vous accueillir !</p>`;
-      } else if (status === 'cancelled') {
-        subject = 'Votre réservation a été annulée';
-        html = `<p>Bonjour ${updatedBooking.User.firstName},<br><br>Nous sommes désolés de vous informer que votre réservation (<b>${updatedBooking.bookingId}</b>) a été <b>annulée</b>.<br>Contactez-nous pour plus d'informations.</p>`;
+    // Send email notification to guest on status change
+    if (['confirmed', 'cancelled', 'checked-in', 'checked-out', 'pending'].includes(status)) {
+      const to = updatedBooking.contactEmail || updatedBooking.User?.email;
+      if (to) {
+        try {
+          await sendMail({
+            to,
+            subject: `Mise à jour réservation (${updatedBooking.bookingId})`,
+            html: bookingStatusUpdateTemplate({ booking: updatedBooking })
+          });
+        } catch (e) {
+          console.error('Failed to send status email:', e.message);
+        }
       }
-      sendMail({
-        to: updatedBooking.User.email,
-        subject,
-        html,
-        text: html.replace(/<[^>]+>/g, '')
-      }).catch(err => console.error('Erreur envoi email réservation:', err));
     }
 
     res.json({
