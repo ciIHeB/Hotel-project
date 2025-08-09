@@ -137,6 +137,10 @@ export class AdminService {
     return this.http.put(`${this.apiUrl}/bookings/${id}/status`, body);
   }
 
+  updateBooking(id: number, booking: Partial<Booking>): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/bookings/${id}`, booking);
+  }
+
   approveBooking(id: number): Observable<any> {
     return this.updateBookingStatus(id, { status: 'confirmed' });
   }

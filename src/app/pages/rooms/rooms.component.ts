@@ -28,7 +28,7 @@ export class RoomsComponent implements OnInit {
   }
 
   private loadRooms() {
-    this.http.get<any>(`${environment.apiUrl}/rooms?limit=12`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/rooms?limit=50`).subscribe({
       next: (res) => {
         const data = res?.data || [];
         if (!data.length) {

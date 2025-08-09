@@ -1,5 +1,6 @@
 const express = require('express');
 const { body, validationResult, query } = require('express-validator');
+const { Op } = require('sequelize');
 const { User } = require('../models');
 const { adminProtect } = require('../middleware/auth');
 
@@ -28,15 +29,16 @@ router.get('/', adminProtect, [
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Build filter
+    // Build filter (Sequelize)
     const filter = {};
     if (req.query.role) filter.role = req.query.role;
     if (req.query.isActive !== undefined) filter.isActive = req.query.isActive === 'true';
     if (req.query.search) {
-      filter.$or = [
-        { firstName: { $regex: req.query.search, $options: 'i' } },
-        { lastName: { $regex: req.query.search, $options: 'i' } },
-        { email: { $regex: req.query.search, $options: 'i' } }
+      const term = `%${req.query.search}%`;
+      filter[Op.or] = [
+        { firstName: { [Op.like]: term } },
+        { lastName: { [Op.like]: term } },
+        { email: { [Op.like]: term } }
       ];
     }
 
@@ -217,7 +219,7 @@ router.put('/:id', adminProtect, [
 // @access  Private/Admin
 router.delete('/:id', adminProtect, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findByPk(req.params.id);
 
     if (!user) {
       return res.status(404).json({
@@ -227,7 +229,7 @@ router.delete('/:id', adminProtect, async (req, res) => {
     }
 
     // Don't allow admin to delete themselves
-    if (user._id.toString() === req.user.id) {
+    if (String(user.id) === String(req.user.id)) {
       return res.status(400).json({
         success: false,
         message: 'You cannot delete your own account'
@@ -249,12 +251,11 @@ router.delete('/:id', adminProtect, async (req, res) => {
   }
 });
 
-// @route   PUT /api/users/:id/toggle-status
 // @desc    Toggle user active status (Admin only)
-// @access  Private/Admin
-router.put('/:id/toggle-status', adminProtect, async (req, res) => {
+// Supports both PATCH and PUT to be compatible with frontend
+const toggleStatusHandler = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findByPk(req.params.id);
 
     if (!user) {
       return res.status(404).json({
@@ -264,26 +265,21 @@ router.put('/:id/toggle-status', adminProtect, async (req, res) => {
     }
 
     // Don't allow admin to deactivate themselves
-    if (user._id.toString() === req.user.id) {
+    if (String(user.id) === String(req.user.id)) {
       return res.status(400).json({
         success: false,
         message: 'You cannot deactivate your own account'
       });
     }
 
-    await User.update({ isActive: !user.isActive }, { where: { id: req.params.id } });
-    const updatedUser = await User.findByPk(req.params.id);
+    const newStatus = !user.isActive;
+    await User.update({ isActive: newStatus }, { where: { id: req.params.id } });
+    const updatedUser = await User.findByPk(req.params.id, { attributes: { exclude: ['password'] } });
 
     res.json({
       success: true,
-      message: `User ${user.isActive ? 'activated' : 'deactivated'} successfully`,
-      data: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        isActive: user.isActive
-      }
+      message: `User ${newStatus ? 'activated' : 'deactivated'} successfully`,
+      data: updatedUser
     });
   } catch (error) {
     res.status(500).json({
@@ -292,6 +288,11 @@ router.put('/:id/toggle-status', adminProtect, async (req, res) => {
       error: error.message
     });
   }
-});
+};
+
+// @route   PATCH /api/users/:id/toggle-status
+router.patch('/:id/toggle-status', adminProtect, toggleStatusHandler);
+// @route   PUT /api/users/:id/toggle-status (backward compatible)
+router.put('/:id/toggle-status', adminProtect, toggleStatusHandler);
 
 module.exports = router;

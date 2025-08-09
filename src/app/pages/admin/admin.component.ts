@@ -34,22 +34,51 @@ export class AdminComponent implements OnInit {
 
   loadDashboardData() {
     this.loading = true;
+    let completedRequests = 0;
+    const totalRequests = 3;
 
-    // Load stats
-    this.adminService.getRooms().subscribe(data => {
-      this.stats.totalRooms = data.data?.length || 0;
+    const checkAllComplete = () => {
+      completedRequests++;
+      if (completedRequests >= totalRequests) {
+        this.loading = false;
+      }
+    };
+
+    // Load stats with error handling
+    this.adminService.getRooms().subscribe({
+      next: (data) => {
+        this.stats.totalRooms = data.data?.length || 0;
+        checkAllComplete();
+      },
+      error: (error) => {
+        console.error('Error loading rooms:', error);
+        checkAllComplete();
+      }
     });
 
-    this.adminService.getBookings().subscribe(data => {
-      this.stats.totalBookings = data.data?.length || 0;
-      this.stats.activeBookings = data.data?.filter((b: any) => 
-        b.status === 'confirmed' || b.status === 'checked-in').length || 0;
-      this.recentBookings = data.data?.slice(0, 5) || [];
+    this.adminService.getBookings().subscribe({
+      next: (data) => {
+        this.stats.totalBookings = data.data?.length || 0;
+        this.stats.activeBookings = data.data?.filter((b: any) => 
+          b.status === 'confirmed' || b.status === 'checked-in').length || 0;
+        this.recentBookings = data.data?.slice(0, 5) || [];
+        checkAllComplete();
+      },
+      error: (error) => {
+        console.error('Error loading bookings:', error);
+        checkAllComplete();
+      }
     });
 
-    this.adminService.getUsers().subscribe(data => {
-      this.stats.totalUsers = data.data?.length || 0;
-      this.loading = false;
+    this.adminService.getUsers().subscribe({
+      next: (data) => {
+        this.stats.totalUsers = data.data?.length || 0;
+        checkAllComplete();
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
+        checkAllComplete();
+      }
     });
   }
 

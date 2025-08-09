@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BookingService } from '../../services/booking.service';
+import { BookingService, BookingResponse } from '../../services/booking.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -35,6 +35,7 @@ export class BookingComponent {
   isSubmitted = false;
   isSubmitting = false;
   submitError = '';
+  bookingConfirmation: any = null;
 
   onSubmit() {
     if (!this.bookingForm.checkIn || !this.bookingForm.checkOut) {
@@ -57,14 +58,16 @@ export class BookingComponent {
     };
 
     this.bookingService.createBooking(bookingData).subscribe({
-      next: (response) => {
+      next: (response: BookingResponse) => {
         this.isSubmitted = true;
         this.isSubmitting = false;
-        // Reset du formulaire après 5 secondes
+        this.bookingConfirmation = response.data;
+        // Reset du formulaire après 10 secondes
         setTimeout(() => {
           this.isSubmitted = false;
+          this.bookingConfirmation = null;
           this.resetForm();
-        }, 5000);
+        }, 10000);
       },
       error: (error) => {
         this.isSubmitting = false;
@@ -88,5 +91,27 @@ export class BookingComponent {
       message: ''
     };
     this.submitError = '';
+    this.bookingConfirmation = null;
+  }
+
+  getMinDate(): string {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  }
+
+  onCheckInChange() {
+    // If check-out is before or same as check-in, clear it
+    if (this.bookingForm.checkOut && this.bookingForm.checkOut <= this.bookingForm.checkIn) {
+      this.bookingForm.checkOut = '';
+    }
+  }
+
+  getMinCheckOutDate(): string {
+    if (this.bookingForm.checkIn) {
+      const checkInDate = new Date(this.bookingForm.checkIn);
+      checkInDate.setDate(checkInDate.getDate() + 1);
+      return checkInDate.toISOString().split('T')[0];
+    }
+    return this.getMinDate();
   }
 }

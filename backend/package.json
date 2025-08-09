@@ -9,7 +9,8 @@
     "test": "jest",
     "setup-db": "node setup-database.js",
     "migrate-admins": "node scripts/migrate-admins-to-users.js",
-    "seed-rooms": "node scripts/seed-rooms.js"
+    "seed-rooms": "node scripts/seed-rooms.js",
+    "reset-db": "node scripts/reset-database.js"
   },
   "keywords": [
     "hotel",

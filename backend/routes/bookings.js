@@ -59,6 +59,11 @@ router.get('/', adminProtect, [
       data: bookings
     });
   } catch (error) {
+    console.error('POST /api/bookings failed:', {
+      body: req.body,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -134,8 +139,22 @@ router.post('/', [
       specialRequests
     } = req.body;
 
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
+    // Normalize date strings to midnight to avoid timezone issues
+    const normalizeDate = (d) => {
+      const dt = new Date(d);
+      // If invalid date
+      if (isNaN(dt.getTime())) return null;
+      dt.setHours(0, 0, 0, 0);
+      return dt;
+    };
+
+    const checkInDate = normalizeDate(checkIn);
+    const checkOutDate = normalizeDate(checkOut);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+
+    if (!checkInDate || !checkOutDate) {
+      return res.status(400).json({ success: false, message: 'Invalid date format. Use YYYY-MM-DD.' });
+    }
 
     // Validate dates
     if (checkInDate >= checkOutDate) {
@@ -145,20 +164,53 @@ router.post('/', [
       });
     }
 
-    if (checkInDate < new Date()) {
+    if (checkInDate < today) {
       return res.status(400).json({
         success: false,
         message: 'Check-in date cannot be in the past'
       });
     }
 
-    // Find the room by type
-    const room = await Room.findOne({ where: { type: roomType } });
+    // Normalize roomType from UI labels (e.g., "Chambre Deluxe") to model ENUM
+    const normalizeRoomType = (t) => {
+      if (!t) return null;
+      const s = String(t).toLowerCase().trim();
+      if (['standard', 'chambre standard'].includes(s)) return 'standard';
+      if (['deluxe', 'chambre deluxe'].includes(s)) return 'deluxe';
+      if (['suite', 'chambre suite'].includes(s)) return 'suite';
+      if (['presidential', 'présidentielle', 'presidentielle', 'chambre présidentielle', 'chambre presidentielle'].includes(s)) return 'presidential';
+      return null;
+    };
+
+    const normalizedType = normalizeRoomType(roomType);
+    if (!normalizedType) {
+      return res.status(400).json({ success: false, message: 'Invalid room type selected.' });
+    }
+
+    // Find the room by type (fallback: create a basic placeholder room if none exist)
+    let room = await Room.findOne({ where: { type: normalizedType } });
     if (!room) {
-      return res.status(404).json({
-        success: false,
-        message: 'Room not found'
-      });
+      try {
+        room = await Room.create({
+          roomNumber: `AUTO-${Date.now()}`,
+          type: normalizedType,
+          title: `${roomType.charAt(0).toUpperCase() + roomType.slice(1)} Room`,
+          description: 'Auto-created placeholder room for booking request.',
+          price: 100,
+          capacityAdults: 2,
+          capacityChildren: 2,
+          bedType: 'queen',
+          size: 20,
+          amenities: [],
+          images: [],
+          isAvailable: true,
+          floor: 1,
+          smokingAllowed: false,
+          petFriendly: false
+        });
+      } catch (e) {
+        return res.status(400).json({ success: false, message: 'Selected room type is not available.' });
+      }
     }
 
     if (!room.isAvailable) {
@@ -176,11 +228,11 @@ router.post('/', [
       });
     }
 
-    // Check if room is already booked for these dates
+    // Check if room is already booked for these dates (only for confirmed/checked-in)
     const conflictingBooking = await Booking.findOne({
       where: {
         roomId: room.id,
-        status: ['confirmed', 'checked-in'],
+        status: { [Op.in]: ['confirmed', 'checked-in'] },
         checkIn: { [Op.lt]: checkOutDate },
         checkOut: { [Op.gt]: checkInDate }
       }
@@ -193,8 +245,8 @@ router.post('/', [
       });
     }
 
-    // Calculate total amount
-    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+    // Calculate total amount (ensure at least 1 night)
+    const nights = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
     const totalAmount = nights * room.price;
 
     // Generate a unique bookingId
@@ -211,8 +263,6 @@ router.post('/', [
       guestsChildren,
       totalAmount,
       status: 'pending',
-      paymentStatus: 'pending',
-      paymentMethod: 'none',
       contactPhone,
       contactEmail,
       specialRequests,
@@ -305,6 +355,62 @@ router.put('/:id/status', adminProtect, [
     res.json({
       success: true,
       message: `Booking ${status} successfully`,
+      data: updatedBooking
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
+// @route   PATCH /api/bookings/:id
+// @desc    Update booking details (Admin only)
+// @access  Private/Admin
+router.patch('/:id', adminProtect, [
+  body('status').optional().isIn(['pending', 'confirmed', 'checked-in', 'checked-out', 'cancelled']).withMessage('Invalid status'),
+  body('paymentStatus').optional().isIn(['pending', 'paid', 'refunded', 'failed']).withMessage('Invalid payment status'),
+  body('specialRequests').optional().isLength({ max: 500 }).withMessage('Special requests cannot exceed 500 characters'),
+  body('cancellationReason').optional().isLength({ max: 200 }).withMessage('Cancellation reason cannot exceed 200 characters')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors',
+        errors: errors.array()
+      });
+    }
+
+    const booking = await Booking.findByPk(req.params.id);
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: 'Booking not found'
+      });
+    }
+
+    // Build update object with only provided fields
+    const updateData = {};
+    if (req.body.status !== undefined) updateData.status = req.body.status;
+    if (req.body.paymentStatus !== undefined) updateData.paymentStatus = req.body.paymentStatus;
+    if (req.body.specialRequests !== undefined) updateData.specialRequests = req.body.specialRequests;
+    if (req.body.cancellationReason !== undefined) updateData.cancellationReason = req.body.cancellationReason;
+
+    await Booking.update(updateData, { where: { id: req.params.id } });
+    const updatedBooking = await Booking.findByPk(req.params.id, {
+      include: [
+        { model: Room, attributes: ['roomNumber', 'type', 'title', 'price'] },
+        { model: User, attributes: ['firstName', 'lastName', 'email'] }
+      ]
+    });
+
+    res.json({
+      success: true,
+      message: 'Booking updated successfully',
       data: updatedBooking
     });
   } catch (error) {
