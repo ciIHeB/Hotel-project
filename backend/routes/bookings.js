@@ -349,4 +349,32 @@ router.get('/search/:bookingId', async (req, res) => {
   }
 });
 
+// @route   DELETE /api/bookings/:id
+// @desc    Delete a booking (admin)
+// @access  Private (Admin)
+router.delete('/:id', adminProtect, async (req, res) => {
+  try {
+    const booking = await Booking.findByPk(req.params.id);
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: 'Booking not found'
+      });
+    }
+
+    await Booking.destroy({ where: { id: req.params.id } });
+
+    res.json({
+      success: true,
+      message: 'Booking deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

@@ -145,6 +145,10 @@ export class AdminService {
     return this.updateBookingStatus(id, { status: 'cancelled', cancellationReason });
   }
 
+  deleteBooking(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/bookings/${id}`);
+  }
+
   // Users CRUD
   getUsers(): Observable<any> {
     return this.http.get(`${this.apiUrl}/users`);

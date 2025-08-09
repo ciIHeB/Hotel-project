@@ -135,4 +135,14 @@ export class AdminBookingsComponent implements OnInit {
       error: (err) => console.error('Error rejecting booking:', err)
     });
   }
+
+  delete(booking: Booking) {
+    if (!booking.id) return;
+    const ok = confirm(`Delete booking ${booking.bookingId}? This cannot be undone.`);
+    if (!ok) return;
+    this.adminService.deleteBooking(booking.id).subscribe({
+      next: () => this.loadBookings(),
+      error: (err) => console.error('Error deleting booking:', err)
+    });
+  }
 }
