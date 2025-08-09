@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ContactService, ContactForm } from '../../services/contact.service';
 
 @Component({
   selector: 'app-contact',
@@ -11,7 +10,7 @@ import { ContactService, ContactForm } from '../../services/contact.service';
   styleUrl: './contact.component.css'
 })
 export class ContactComponent {
-  contactForm: ContactForm = {
+  contactForm = {
     name: '',
     email: '',
     subject: '',
@@ -19,9 +18,6 @@ export class ContactComponent {
   };
 
   isSubmitted = false;
-  isLoading = false;
-  errorMessage = '';
-  successMessage = '';
 
   contactInfo = {
     address: 'Avenue de la Paix, Hammamet Sud, Tunisie',
@@ -30,37 +26,14 @@ export class ContactComponent {
     hours: 'Réception 24h/24'
   };
 
-  constructor(private contactService: ContactService) {}
-
   onSubmit() {
-    if (this.isLoading) return;
-
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.contactService.sendMessage(this.contactForm).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        if (response.success) {
-          this.successMessage = response.message;
-          this.isSubmitted = true;
-          
-          setTimeout(() => {
-            this.isSubmitted = false;
-            this.successMessage = '';
-            this.resetForm();
-          }, 5000);
-        } else {
-          this.errorMessage = response.message || 'Une erreur est survenue lors de l\'envoi du message.';
-        }
-      },
-      error: (error) => {
-        this.isLoading = false;
-        console.error('Contact form error:', error);
-        this.errorMessage = 'Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.';
-      }
-    });
+    // TODO: Implémenter l'envoi réel vers le backend
+    this.isSubmitted = true;
+    
+    setTimeout(() => {
+      this.isSubmitted = false;
+      this.resetForm();
+    }, 3000);
   }
 
   resetForm() {

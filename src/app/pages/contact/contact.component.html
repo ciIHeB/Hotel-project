@@ -91,20 +91,9 @@
             required></textarea>
         </div>
 
-        <button type="submit" class="submit-btn" [disabled]="!contactFormElement.form.valid || isLoading">
-          <span *ngIf="!isLoading">Envoyer le message</span>
-          <span *ngIf="isLoading">Envoi en cours...</span>
+        <button type="submit" class="submit-btn" [disabled]="!contactFormElement.form.valid">
+          Envoyer le message
         </button>
-        
-        <!-- Error message -->
-        <div class="error-message" *ngIf="errorMessage">
-          <p>❌ {{ errorMessage }}</p>
-        </div>
-        
-        <!-- Success message -->
-        <div class="success-message" *ngIf="successMessage && !isSubmitted">
-          <p>✅ {{ successMessage }}</p>
-        </div>
       </form>
     </div>
   </div>
