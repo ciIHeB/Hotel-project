@@ -15,6 +15,11 @@
         <p>🏊‍♂️ Aquapark avec 7 toboggans</p>
         <p>🏖️ Plage privée</p>
       </div>
+
+      <div class="selected-service" *ngIf="selectedService" style="margin-top:1rem; padding:0.75rem; background:#f3f7ff; border-left:4px solid #3b82f6; border-radius:4px;">
+        <strong>Service bien-être sélectionné:</strong> {{ selectedService }}
+      </div>
+    
     </div>
 
     <div class="booking-form-container">
@@ -103,6 +108,43 @@
           </div>
         </div>
 
+        <!-- Chambres supplémentaires (multi-chambre) -->
+        <div class="form-row" style="align-items: flex-end;">
+          <div class="form-group">
+            <label for="extraRoomType">Ajouter une autre chambre</label>
+            <select 
+              id="extraRoomType" 
+              name="extraRoomType"
+              [(ngModel)]="newRoom.roomType">
+              <option value="">-- Sélectionner le type --</option>
+              <option *ngFor="let type of roomTypes" [value]="type.value">{{ type.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="extraRoomQty">Quantité</label>
+            <input 
+              type="number" 
+              id="extraRoomQty" 
+              name="extraRoomQty"
+              [(ngModel)]="newRoom.quantity"
+              min="1"
+              max="10">
+          </div>
+          <div class="form-group">
+            <button type="button" class="submit-btn" (click)="addAdditionalRoom()">Ajouter</button>
+          </div>
+        </div>
+
+        <div *ngIf="additionalRooms.length" style="margin-bottom: 1rem;">
+          <h4>Chambres ajoutées</h4>
+          <ul style="list-style: none; padding: 0;">
+            <li *ngFor="let r of additionalRooms; let i = index" style="display: flex; align-items: center; gap: 10px; margin: 6px 0;">
+              <span>{{ r.quantity }} × {{ getRoomTypeLabel(r.roomType) }}</span>
+              <button type="button" class="submit-btn" style="background:#ef4444;" (click)="removeAdditionalRoom(i)">Retirer</button>
+            </li>
+          </ul>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label for="checkIn">Date d'arrivée *</label>
@@ -124,6 +166,27 @@
               [(ngModel)]="bookingForm.checkOut" 
               [min]="getMinCheckOutDate()"
               required>
+          </div>
+        </div>
+        <!-- Sélection du service bien-être -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="wellnessService">Service bien-être</label>
+            <select 
+              id="wellnessService" 
+              name="wellnessService"
+              [(ngModel)]="bookingForm.wellnessService">
+              <option value="">-- Aucun --</option>
+              <option *ngFor="let opt of wellnessOptions" [value]="opt">{{ opt }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="wellnessTime">Heure souhaitée</label>
+            <input 
+              type="time" 
+              id="wellnessTime" 
+              name="wellnessTime"
+              [(ngModel)]="bookingForm.wellnessTime">
           </div>
         </div>
 

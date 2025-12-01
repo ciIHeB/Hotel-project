@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-wellness',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './wellness.component.html',
-  styleUrl: './wellness.component.css'
+  styleUrls: ['./wellness.component.css']
 })
 export class WellnessComponent {
   wellnessServices = [

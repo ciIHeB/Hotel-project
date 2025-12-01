@@ -1,6 +1,6 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
 import { Section2App } from './section2/section2.component';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Section3Component } from './section3/section3.component';
 import { Section4Component } from './section4/section4.component';
 import { appSection5 } from './section5/section5.component';
@@ -13,6 +13,7 @@ import { isPlatformBrowser } from '@angular/common';
   selector: 'app-home',
   standalone: true,
   imports: [
+    RouterModule,
     Section2App,
     Section3Component,
     Section4Component,
@@ -22,7 +23,7 @@ import { isPlatformBrowser } from '@angular/common';
     Section8Component,
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
   homeTitle: HTMLElement | null = null;

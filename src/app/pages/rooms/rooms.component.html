@@ -32,7 +32,7 @@
           </ul>
         </div>
 
-        <button class="book-btn" routerLink="/reservation">Réserver maintenant</button>
+        <button class="book-btn" [routerLink]="'/reservation'" [queryParams]="{ room: room.name }">Réserver maintenant</button>
       </div>
     </div>
   </div>

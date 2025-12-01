@@ -9,6 +9,9 @@ header {
   font-size: 26px;
   font-family: "Playfair Display", system-ui;
   font-weight: 200;
+  display: inline-block;
+  position: relative;
+  transform: translate(-8px, -4px);
 }
 .header-link {
   font-size: 14px;

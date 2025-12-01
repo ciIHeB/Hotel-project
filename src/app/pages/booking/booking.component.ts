@@ -1,17 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BookingService, BookingResponse } from '../../services/booking.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-booking',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './booking.component.html',
-  styleUrl: './booking.component.css'
+  styleUrls: ['./booking.component.css']
 })
-export class BookingComponent {
-  constructor(private bookingService: BookingService) {}
+export class BookingComponent implements OnInit {
+  constructor(private bookingService: BookingService, private route: ActivatedRoute) {}
+
+  selectedService: string | null = null;
+  wellnessOptions = ['Spa', 'Hammam', 'Massages', 'Salle de Sport'];
+  selectedRoomName: string | null = null;
+
   bookingForm = {
     firstName: '',
     lastName: '',
@@ -22,7 +28,9 @@ export class BookingComponent {
     checkOut: '',
     guestsAdults: 2,
     guestsChildren: 0,
-    message: ''
+    message: '',
+    wellnessService: '',
+    wellnessTime: ''
   };
 
   roomTypes = [
@@ -36,6 +44,29 @@ export class BookingComponent {
   isSubmitting = false;
   submitError = '';
   bookingConfirmation: any = null;
+
+  // Multi-room support
+  additionalRooms: Array<{ roomType: 'standard' | 'deluxe' | 'suite' | 'presidential'; quantity: number }> = [];
+  newRoom: { roomType: 'standard' | 'deluxe' | 'suite' | 'presidential' | ''; quantity: number } = { roomType: '', quantity: 1 };
+
+  ngOnInit(): void {
+    const svc = this.route.snapshot.queryParamMap.get('service');
+    const roomName = this.route.snapshot.queryParamMap.get('room');
+    if (svc) {
+      this.selectedService = svc;
+      this.bookingForm.wellnessService = svc;
+      if (!this.bookingForm.message) {
+        this.bookingForm.message = `Service bien-être souhaité: ${svc}`;
+      }
+    }
+    if (roomName) {
+      this.selectedRoomName = roomName;
+      const mapped = this.mapRoomNameToType(roomName);
+      if (mapped) {
+        this.bookingForm.roomType = mapped;
+      }
+    }
+  }
 
   onSubmit() {
     if (!this.bookingForm.checkIn || !this.bookingForm.checkOut) {
@@ -54,7 +85,7 @@ export class BookingComponent {
       checkOut: this.bookingForm.checkOut,
       guestsAdults: this.bookingForm.guestsAdults,
       guestsChildren: this.bookingForm.guestsChildren,
-      specialRequests: this.bookingForm.message
+      specialRequests: this.composeSpecialRequests()
     };
 
     this.bookingService.createBooking(bookingData).subscribe({
@@ -88,7 +119,9 @@ export class BookingComponent {
       checkOut: '',
       guestsAdults: 2,
       guestsChildren: 0,
-      message: ''
+      message: '',
+      wellnessService: '',
+      wellnessTime: ''
     };
     this.submitError = '';
     this.bookingConfirmation = null;
@@ -113,5 +146,46 @@ export class BookingComponent {
       return checkInDate.toISOString().split('T')[0];
     }
     return this.getMinDate();
+  }
+
+  private composeSpecialRequests(): string {
+    const lines: string[] = [];
+    if (this.bookingForm.message) lines.push(this.bookingForm.message);
+    if (this.bookingForm.wellnessService) lines.push(`Wellness: ${this.bookingForm.wellnessService}`);
+    if (this.bookingForm.wellnessTime) lines.push(`Heure souhaitée: ${this.bookingForm.wellnessTime}`);
+    if (this.additionalRooms.length) {
+      const label = (val: string) => this.roomTypes.find(t => t.value === val)?.label || val;
+      const parts = this.additionalRooms.map(r => `${r.quantity}× ${label(r.roomType)}`);
+      lines.push(`Chambres supplémentaires: ${parts.join(', ')}`);
+    }
+    return lines.join(' | ');
+  }
+
+  private mapRoomNameToType(name: string): 'standard' | 'deluxe' | 'suite' | 'presidential' | '' {
+    const n = name.toLowerCase();
+    if (/(standard)/.test(n)) return 'standard';
+    if (/(deluxe)/.test(n)) return 'deluxe';
+    if (/(presidential|presidentielle|présidentielle)/.test(n)) return 'presidential';
+    if (/(suite)/.test(n)) return 'suite';
+    return '';
+  }
+
+  getRoomTypeLabel(value: string): string {
+    return this.roomTypes.find(t => t.value === value)?.label || value;
+  }
+
+  addAdditionalRoom() {
+    if (!this.newRoom.roomType || this.newRoom.quantity < 1) return;
+    const idx = this.additionalRooms.findIndex(r => r.roomType === this.newRoom.roomType);
+    if (idx >= 0) {
+      this.additionalRooms[idx].quantity += this.newRoom.quantity;
+    } else {
+      this.additionalRooms.push({ roomType: this.newRoom.roomType as any, quantity: this.newRoom.quantity });
+    }
+    this.newRoom = { roomType: '', quantity: 1 };
+  }
+
+  removeAdditionalRoom(index: number) {
+    this.additionalRooms.splice(index, 1);
   }
 }

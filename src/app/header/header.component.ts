@@ -10,7 +10,7 @@ import { isPlatformBrowser } from '@angular/common';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css',
+  styleUrls: ['./header.component.css'],
   animations:[
     trigger('openClose',[
       state('open',style({

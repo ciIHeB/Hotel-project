@@ -12,8 +12,8 @@
       <div class="wellness-content">
         <h3>{{ service.name }}</h3>
         <p>{{ service.description }}</p>
-        <button class="book-btn">Réserver</button>
+        <button class="book-btn" [routerLink]="'/reservation'" [queryParams]="{ service: service.name }">Réserver</button>
       </div>
     </div>
   </div>
-</div> 
+</div>
